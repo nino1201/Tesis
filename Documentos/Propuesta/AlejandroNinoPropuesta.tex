@@ -1,0 +1,198 @@
+\documentclass[12pt]{article}
+
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage[utf8]{inputenc}
+\usepackage[espanol]{babel}
+\usepackage{hyperref}
+\usepackage[left=3cm,top=3cm,right=3cm,nohead,nofoot]{geometry}
+\usepackage{braket}
+\usepackage{datenumber}
+%\newdate{date}{10}{05}{2013}
+%\date{\displaydate{date}}
+
+\begin{document}
+
+\begin{center}
+\Huge
+%Comparative study of 5 x-ray detectors: A Monte Carlo Simulation study  
+Estudio de Monte Carlo de la eficiencia cuántica de diferentes dectores de rayos-X
+
+\vspace{5mm}
+\Large Alejandro Niño Chaparro
+
+\large
+201512125
+
+
+\vspace{2mm}
+\Large
+Director: Carlos Arturo Ávila Bernal
+
+\normalsize
+\vspace{2mm}
+
+\today
+\end{center}
+
+
+\normalsize
+\section{Introducción}
+
+%Introducci�n a la propuesta de Monograf�a. Debe incluir un breve resumen del estado del arte del problema a tratar. Tambi�n deben aparecer citadas todas las referencias de la bibliograf�a (a menos de que se citen m�s adelante, en los objetivos o metodolog�a, por ejemplo)
+El cáncer es una problemática de salud mundial. Se ha estimado que hasta el momento en el 2018 hay 3.19 millones de casos nuevos de cáncer y 1.93 millones de muertes en Europa debido a ello; el cáncer de seno es la causa de aproximadamente de 500.000 casos de estas muertes$\cite{ferlay2018}$.  Por esta razón, los métodos de detección temprana y tratamiento de cáncer han sido siempre un objeto de estudio en la comunidad científica. La mamografía, que es una técnica enfocada en detectar tumores en el seno a bajas dosis de radiación en el espectro de los rayos-X (estas energías van del orden de $10keV$ a $40keV$ ), ha sido foco principal en los estudios sobre el cáncer. Debido a que este método se basa en la interacción de radiación con materia viva, como los organos, hace que no siempre sea posible realizar investigaciones experimentales sobre estos. Por lo tanto, las investigaciones a partir de simulaciones toman un rol importante en el área de radiación y física médica.
+\vspace{3mm}
+
+Los detectores usados en dispositivos modernos para las mamografías de rayos-X están compuestos de materiales semiconductores, ya que facilitan la digitalización y posterior análisis de las imágenes. Además, el reducido tamaño de los pixeles en detectores semiconductores garantiza una excelente resolución espacial. El semiconductor típico usado en mamógrafos comerciales es Selenio, sin embargo, vale la pena explorar otras posibilidades tale como : Silicio $(Si)$, Telurio de Cadmio $(CdTe)$, Arsenurio de Galio $(GaAs)$ y Perovskita $(CH_{3}NH_{3}PbI_{3})$, entre otros.  Para determinar el desempeño de los detectores es necesario hallar el porcentaje de absorción de fotones del material del detector, es decir la eficiencia cuántica. Esta depende del grosor de la región de agotamiento del material del detector. El Silicio, tiene el máximo rendimiento comparado con otros semiconductores a temperatura ambiente (para un grosor estándar de 300$\mu m$). No obstante, su eficiencia comienza a decaer significativamente a partir de energías de alrededor de 20 $keV$ $\cite{silicon}$. Por lo que es importante explorar otros materiales semiconductores que provean una mayor eficiencia cuántica para el desarrollo de mamógrafos, además de mantener una buena resolución de las imágenes. Por ejemplo, se han reportado estudios que determinan a la Perovskita como una solución procesable orgánica-inorgánica de un semiconductor con banda de gap directa, el cual puede ser usado cómo un fotoconductor altamente sensitivo para conversión directa de rayos-X a corriente eléctrica$\cite{yakunin2015}$ . 
+\vspace{3mm}
+
+La formación de imágenes médicas depende de la interacción de radiación con el cuerpo humano, ya sea por dispersión o absorción. Para un rayo monocromático de fotones, la intensidad decrece (a medida que este atraviesa un tejido del cuerpo humano) de acuerdo a la ley de Lambert-Beer $I=I_0 * e^{-\mu x}$, donde $I_{0}$ es la intensidad incidente, $x$ es la longitud del camino recorrido y $\mu$ es el coeficiente de atenuación del tejido. Este último depende de la composición química del tejido, y es grande para materiales electrodensos$\cite{atenuacion}$. Por consiguiente, los coeficientes de atenuación juegan un papel relevante en la formación de imágenes, debido a la capacidad que tienen los detectores para medirlos. La dificultad para realizar montajes experimentales usando diferentes organos del cuerpo humano y materiales biológicos como la sangre, el hueso, el pulmón, tejido adiposo, músculo y piel,  ha complicado su investigación. En consecuencia a esto, por un lado, se ha creado la necesidad de usar materiales que son similares a tejidos humanos, en cuanto a sus tasas de absorción, como son el plástico PMMA (resina metacrilato de metíl), la parafina y el acrílico, entre otros.$\cite{materiales}$ Por el otro, el uso de simulaciones de Monte Carlo ha permitido explorar los coeficientes de absorción para materiales biológicos, cuyo montaje experimental tiene un alto grado de complejidad -como la sangre-, estas simulaciones se hacen teniendo en cuenta las composiciones químicas de estos y su interacción con los rayos de fotones. 
+\vspace{3mm}
+
+
+Las simulaciones de Monte Carlo juegan un rol fundamental en el campo de física médica, debido a que es una alternativa para analizar problemas que no se puedan realizar experimentalmente. El paquete GEANT4 $\cite{geant}$ es una herramienta -basada en métodos de Monte Carlo- hecha para simular el paso de partículas a através de materia,  teniendo en cuenta diferentes procesos de interacción . Este paquete permite realizar simulaciones de detectores, a partir de características geométricas y de composición, lo que incluye detectores semiconductores usados en estudios mamográficos. GAMOS es una interfase de GEANT4, exclusiva para estudios en física médica, que facilita la interacción del usuario con este paquete, sin necesidad de escribir código en lenguaje C++ $\cite{arce2014}$. Por otra parte, las simulaciones para dosis típicas de rayos-X usados para mamografías requieren la generación del orden de $10^{12}$ fotones. Sin embargo, existe un limitante, ya que el límte máximo de fotones que permite generar GAMOS es del orden de $10^9$, por lo que se requiere realizar cientos de simulaciones en paralelo.
+\vspace{3mm}
+
+ 
+Finalmente, en este proyecto, dando uso a la interfase GAMOS, se van a hacer simulaciones de la geometría del detector para ver como incrementa la eficiencia cuántica en términos del grosor de la región de agotamiento para los diferentes materiales semiconductores. Adicionalmente, quisiéramos estudiar la incertidumbre con que los diferentes tipos de sensores semiconductores miden la atenuación para  materiales cercanos a los que se encuentran en el tejido mamario, como son: plástico PMMA (resina metacrilato de metil), Parafina y Acrílico,  bajo una misma dosis. Las simulaciones a realizar serán con dosis típicas de mamografia, lo cual hace necesario usar un sistema de computo más avanzado, la infraestructura computacional apropiada para realizar este tipo de estudio es el HPC de la facutlad de ciencias.   
+
+\section{Objetivo General}
+
+%Objetivo general del trabajo. Empieza con un verbo en infinitivo.
+
+Comparar el desempeño de detectores de Silicio, Selenio, Telurio de Cadmio y Perovskita, usados para tomas de imágenes mamográficas, a apartir de simulaciones de Monte Carlo.    
+
+\section{Objetivos Específicos}
+
+%Objetivos espec�ficos del trabajo. Empiezan con un verbo en infinitivo.
+
+\begin{itemize}
+	\item Modelar detectores de Silicio, Telurio de Cadmio, Selenio, Arsenurio de Galio y Pervoskita usando la interfase GAMOS.
+
+\item Hacer estudios cuantitativos de eficiencias cuánticas de cada detector para energías entre 10$keV$ y 40 $keV$ 
+
+	\item Estudiar los coeficientes de atenuación de distintos materiales tales como PMMA, parafina y acrílico.     
+
+\item Validar las simulaciones a partir de los experimentos usados para estudiar los coeficientes de atenuación.
+
+\item Estudiar los coeficientes de atenuación de distintos componentes del tejido mamario como son: sangre, tejido adiposo, músculo, piel y calcio .     
+
+
+      
+\end{itemize}
+
+\section{Metodología}
+
+%Exponer DETALLADAMENTE la metodolog�a que se usar� en la Monograf�a. 
+
+%Monograf�a te�rica o computacional: �C�mo se har�n los c�lculos te�ricos? �C�mo se har�n las simulaciones? �Qu� requerimientos computacionales se necesitan? �Qu� espacios f�sicos o virtuales se van a utilizar?
+
+%Monograf�a experimental: Recordar que para ser aNombre del direcprobada, los aparatos e insumos experimentales que se usar�n en la Monograf�a deben estar previamente disponibles en la Universidad, o garantizar su disponibilidad para el tiempo en el que se realizar� la misma. �Qu� montajes experimentales se van a usar y que material se requiere? �En qu� espacio f�sico se llevar�n a cabo los experimentos? Si se usan aparatos externos, �qu� permisos se necesitan? Si hay que realizar pagos a terceros, �c�mo se financiar� esto?
+Este proyecto posee un componente experimental y una computacional. El computacional se basa en hacer simulaciones de rayos-X que consisten en considerar varios detectores con diferentes tipos de materiales semiconductores, especificamente: Silicio , Telurio de Cadmio, Selenio, Arsenurio de Galio y Perovskita. En todos los casos se considerará un sensor con un área total de 14 x 14 $mm^{2}$, con 256 x 256 pixeles definidos como celdas foto sensibles con un área eficáz de $55 x 55\mu m^2 $ por pixel, las simulaciones se harán con diferentes grosores. Por otra parte, dado que el límite máximo de fotones que permite generar GAMOS es del orden de $10^9$, por lo que se requiere realizar cientos de simulaciones en paralelo. Por tanto, la infraestructura computacional apropiada para realizar este tipo de estudio es el HPC de la facultad de ciencias.
+
+\vspace{3cm}  
+Por otro lado, para la parte experimental, se va a usar el aparato de rayos-X que se encuentra en el laboratorio de Altas Energías de la Universidad, este montaje consiste de una fuente de rayos-X con un ánodo de Tugsteno de marca Hamamatsu$\cite{hamatsu}$, que produce fotones con energías entre $10 keV$ y $40keV$. Además, los detectores que se van a usar son: primero, el Medipix3RX $\cite{medipix}$ que consiste de una película cuadrada de silicio de $2cm^2$ dividida en más de 65 mil segmentos iguales que funcionan como sensores; y segundo, el detector Timepix3 de Telurio de Cadmio que usa una tecnología CMOS de 0.13$\mu m$ y un tamaño de $55 x 55\mu m^2 $ por pixel. Este montaje incluye un soporte de la muestra, aquí pondremos nuestros propios fantomas, en este caso los 3 diferentes fantomas a usar poseen la misma geometría, la cual se basa en una forma escalonada (cada escalón posee una altura y un ancho de 2.4 $mm$, además su grosor es de 8cm).  
+Así, lo que diferencia a cada fantoma es su composición, el primero está hecho de PMMA, el segundo de parafina y el tercero de acrílico. Las imágenes serán tomadas con el software PIXELMAN$\cite{pixelman}$. Luego, los datos serán analizados con el uso del software ROOT$\cite{root}$, esto se refiere calcular los coeficientes de atenuación de los distintos materiales, apartir de las intensidades medidas, por medio de un ajuste exponencial.   
+Para realizar las comparaciones entre todos los detectores primero se deben evaluar las simulaciones replicando las condiciones experimentales usadas para el montaje anteriormente mencionado, esto quiere decir que solo se hace para el detector de Silicio y el de Telurio de Cadmio. Finalmente, se hallará la eficiencia cuántica de cada detector para diferentes energías entre $10keV$ y $40keV$. 
+ 
+
+\section{Consideraciones \'Eticas}
+
+%A partir del periodo 2017-20 debe inclui	rse en el formato de propuesta de monografía una sección titulada Consideraciones éticas. Esta sección debe incluir los detalles relacionados con aspectos éticos involucrados en el proyecto. Por ejemplo, se puede describir el protocolo establecido para el manejo de datos de manera que se asegure que no habrá manipulación de la información, ni habrá plagio de los mismos. También se puede tener en cuenta si hay algún conflicto de intereses involucrado en el desarrollo del proyecto o se puede detallar si el trabajo está relacionado con las actividades y poblaciones humanas mencionadas en el siguiente link https://ciencias.uniandes.edu.co/investigacion/comite-de-etica. Es importante tener en cuenta que esta sección debe incluir una frase explícita sobre si el proyecto debe pasar o no a estudio del comité de ética de la Facultad de Ciencias.
+Dado que el enfoque es computacional y experimental, las consideraciones éticas que deben ser tenidas en cuenta son sobre plagio y derechos de autor. Debido a esto, me compromento a citar diagramas, imágenes, ideas, adaptaciones a fuentes bibliográficas, ası́ como todo resultado previamente obtenido en artı́culos cientı́ficos asegurando la protección de derechos de autor. Además, dado que este proyecto se basa en leer imágenes médicas, voy a hacer un buen manejo de los datos experimentales y de las simulaciones. Debido a lo anteriormente dicho, considero que no es necesario que este documento sea evaluado por el comité de ética de la Facultad de Ciencias.   
+
+
+\section{Cronograma}
+
+\begin{table}[htb]
+	\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c| }
+	\hline
+	Tareas $\backslash$ Semanas & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 & 13 & 14 & 15 & 16  \\
+	\hline
+	1 & X & X & X  &   &   &   &   &  &  &   &   &   &   &   &   &   \\\hline
+	2 & X  & X & X &   & &  &  &   &   &  &  &  &   &  &  &   \\\hline
+	3 & X & X & X & X &  &  &  &  &  &  &   &   &   &   &   &   \\\hline
+	4 &   &   &  X & X  & X & X  &  X &   &  & X  & X  & X &   &   &  &   \\\hline
+5 &   &   &   &  X & X & X  & X  & X  & X & X  &  X &  &   &   &  &   \\\hline
+6 &   &   &   &   & X  & X  & X  &  X &  &   &   &  &   &   &  &  \\\hline
+7 &   &   &   &   &  &   &   &  X &  &   &   &  &   &   &  &  \\\hline
+8 &   &   &   &   &  &   &   &   &  & X  & X  & X &  X &   &  &   \\\hline
+9 &   &   & X  &  X & X & X  & X  & X  & X & X  & X  & X & X  & X  & X &  \\\hline
+10 &   &   &   &  &  &   &   &   &  &   &   &  &   &   & X &  \\\hline
+11 &   &   &   &   &  &   &   &   &  &   &   &  &   &   &  & X \\\hline
+
+
+
+
+	\end{tabular}
+\end{table}
+\vspace{1mm}
+
+\begin{itemize}
+\item Tarea 1:Familiarización con el montaje experimental- uso de ROOT y PIXELMAN para la reconstrucción de la imagen.
+
+	\item Tarea 2: Revisión bibliográfica general sobre simulaciones de detectores de partículas usando Monte Carlo.  
+	\item Tarea 3: Familiarización con el paquete de simulación GAMOS
+	\item Tarea 4: Simulaciones de los diferentes detectores 
+	\item Tarea 5: Toma de datos experimentales.
+\item Tarea 6: Preparación avance del Proyecto (Documento y presentación) 
+\item Tarea 7: Presentación avance del Proyecto (30$\%$)
+
+\item Tarea 8: Elaboración de conclusiones
+\item Tarea 9: Escritura del documento del proyecto
+\item Tarea 10: Entrega del documento final 
+  
+\item Tarea 11: Sustentación final del proyecto
+  
+  
+\end{itemize}
+
+\section{Personas Conocedoras del Tema}
+
+%Nombres de por lo menos 3 profesores que conozcan del tema. Uno de ellos debe ser profesor de planta de la Universidad de los Andes.
+
+
+\begin{itemize}
+	\item Carlos Andrés Flórez Bustos - Universidad de los Andes 
+	\item Bernardo Gómez - Universidad de los Andes
+	\item Juan Carlos Sanabria - Universidad de los Andes
+\end{itemize}
+
+
+\begin{thebibliography}{10}
+\bibitem{ferlay2018}Ferlay, J., Colombet, M., Soerjomataram, I., Dyba, T., Randi, G., Bettio, M., . . . Bray, F. (2018). Cancer incidence and mortality patterns in Europe: Estimates for 40 countries and 25 major cancers in 2018. European Journal of Cancer, 103, 356-387. doi:10.1016/j.ejca.2018.07.005
+
+\bibitem{silicon}L. Ramello, Medical Imaging with Semiconductor Detectors, AIP Conference Proceedings. (2006). doi:10.1063/1.2160994.
+
+\bibitem{yakunin2015}Yakunin, S., Sytnyk, M., Kriegner, D., Shrestha, S., Richter, M., Matt, G. J., . . . Heiss, W. (2015). Detection of X-ray photons by solution-processed lead halide perovskites. Nature Photonics, 9(7), 444-449. doi:10.1038/nphoton.2015.82
+
+
+\bibitem{atenuacion}H.O. Tekin, MCNP-X Monte Carlo Code Application for Mass Attenuation Coefficients of Concrete at Different Energies by Modeling 3 × 3 Inch NaI(Tl) Detector and Comparison with XCOM and Monte Carlo Data, Science and Technology of Nuclear Installations. 2016 (2016) 1–7. doi:10.1155/2016/6547318.
+
+\bibitem{materiales}D.R. White, J. Booz, R.V. Griffith, J.J. Spokas, I.J. Wilson, Report 44, Journal of the International Commission on Radiation Units and Measurements. os23 (1989). doi:10.1093/jicru/os23.1.report44.
+
+\bibitem{geant}Introduction to Geant4 - geant4.web.cern.ch. (n.d.). Retrieved from http://geant4.web.cern.ch/sites/geant4
+-.web.cern.ch/files/geant4/support/training/DESY2003/IntroductionToGeant4.pdf
+
+\bibitem{arce2014}Arce, P., Lagares, J. I., Harkness, L., Pérez-Astudillo, D., Cañadas, M., Rato, P., . . . Díaz, A. (2014). Gamos: A framework to do Geant4 simulations in different physics fields with an user-friendly interface. Nuclear Instruments and Methods in Physics Research Section A: Accelerators, Spectrometers, Detectors and Associated Equipment, 735, 304-313. doi:10.1016/j.nima.2013.09.036
+
+\bibitem{hamatsu} Hamamatsu Photonics. (s.f.). Microfocus X-ray Sources - sealed type. Recuperadoel 12 de Noviembre de 2018 de \url{https://www.hamamatsu.com/eu/en/community/xndt/prod_X-ray_sources/sealed_type.html.}
+
+\bibitem{medipix}Amsterdam Scientific Instruments. (s.f.). Medipix3RX QMPX3-262k —QMPX3-65k-S- A hybrid pixel detector for X-ray applications. Recuperado el 12 de Noviembre de 2018 de \url{http://www.amscins.com/site/wp-content/uploads/2014/06/A5_MPX3RX_specs_Xray_digital.pdf}
+
+\bibitem{pixelman} D. Turecek, T. Holy, J. Jakubek, S. Pospisil & Z. Vykydal. (2010). Pixelman: amulti-platform data acquisition and processing software package for Medipix2, Ti-mepix and Medipix3 detectors. 12th International Workshop on Radiation Imaging Detectors, July 11th-15th 2010. Robinson College, Cambridge U.K.
+
+\bibitem{root} Root Data Analysis Framework - User’s guide. (2014). Recuperado el 12 de Noviembre de 2018 de \url{https://root.cern.ch/root/htmldoc/guides/users-guide/ROOTUsersGuideA4.pdf.}
+
+
+
+
+
+\end{thebibliography}
+
+\section*{Firma del Director}
+\vspace{1.5cm}
+\section*{Firma del Estudiante}
+\vspace{1.5cm}
+
+\end{document} 

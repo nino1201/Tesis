@@ -1,0 +1,28 @@
+/gamos/setParam GmGeometryFromText:FileName detectors.geom
+#/gamos/setParam GmGeometryFromText:FileNameParallel mesh.geom 1
+/gamos/geometry GmGeometryFromText
+/gamos/physicsList GmEMPhysics 
+/gamos/generator GmGenerator
+
+/run/initialize
+
+/gamos/physics/addParallelProcess
+
+# Fuente de rayos X 
+/gamos/generator/addSingleParticleSource fuente gamma 50.*keV
+/gamos/generator/positionDist fuente GmGenerDistPositionPoint 0. 0. 0.
+/gamos/generator/directionDist fuente GmGenerDistDirectionCone 0. 0. 1. 0.05*deg
+#/gamos/generator/energyDist fuente GmGenerDistEnergyFromFile beamprobW28kV interpolate
+/gamos/userAction GmProdCutsStudyUA DetCutsStudyFilter
+
+/gamos/SD/assocSD2LogVol GmSDSimple GmVSD detector
+/gamos/userAction GmHistosGammaAtSD
+
+
+/gamos/random/restoreSeeds 1201 104
+#/control/execute visVRML2FILE.in
+
+/tracking/verbose 1
+/run/beamOn 1000000
+
+
